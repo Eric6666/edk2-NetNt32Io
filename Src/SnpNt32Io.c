@@ -137,7 +137,7 @@ SnpSetReceiveFilter (
   EFI_MAC_ADDRESS         *MCastFilter
   )
 {
-  char FilterString[SNP_FILTER_LEN];
+  char *FilterString;
   char MCastString[SNP_MCAST_LEN];
 
   const char * pPromiscuousMulticast = "(multicast)";
@@ -150,6 +150,10 @@ SnpSetReceiveFilter (
 
   pcap_t * handle = mSnpNicInfo[Index].Pcap;
 
+  FilterString = malloc (SNP_FILTER_LEN + SNP_MCAST_LEN * MCastFilterCnt);
+  if (FilterString == NULL) {
+    return -1;
+  }
 
   FilterString[0] = 0;
 
@@ -208,16 +212,18 @@ SetFilter:
   //compile the filter
   if (pcap_compile(handle, &fcode,FilterString, 1, NetMask) < 0 ){
     printf ("\nUnable to compile the packet filter. Check the syntax.\n");
+    free (FilterString);
     return -1;
   }
 
   //set the filter
   if (pcap_setfilter (handle, &fcode)<0) {
     printf("\nError setting the filter.\n");
+    free (FilterString);
     return -1;
   }
 
-
+  free (FilterString);
   return 1;
 }
 
