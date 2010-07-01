@@ -34,7 +34,7 @@ SnpGetMac (
     return -1;
   }
 
-  OidData->Oid    = OID_802_3_PERMANENT_ADDRESS;
+  OidData->Oid    = OID_802_3_CURRENT_ADDRESS;
   OidData->Length = NET_ETHER_ADDR_LEN;
   ZeroMemory (OidData->Data, NET_ETHER_ADDR_LEN);
 
