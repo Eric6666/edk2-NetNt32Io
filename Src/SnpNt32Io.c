@@ -239,14 +239,16 @@ SnpReceive (
   struct pcap_pkthdr      *Head;
   UINT8                   *Data;
   pcap_t                  *Pcap;
+  UINT32                  CopyLen;
 
   Pcap = mSnpNicInfo[Index].Pcap;
 
   Result = pcap_next_ex (Pcap, &Head, &Data);
 
   if (Result == 1) {
+    CopyLen = (Head->len <= *BufferSize) ? Head->len : *BufferSize;
     *BufferSize = Head->len;
-    CopyMemory (Buffer, Data, *BufferSize);
+    CopyMemory (Buffer, Data, CopyLen);
   }
 
   return Result;
